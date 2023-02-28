@@ -18,19 +18,24 @@ class _ListBukuState extends State<ListBuku> {
   late Future<List> _listBuku;
   String? _roles;
   bool _visible = false;
-
+  List listbaru = [];
+  List listbaru1 = [];
+  int page = 1;
   // final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-  Future<List> getBuku() async {
+  Future getBuku() async {
     try {
       final String sUrl = "http://192.168.0.142:8000/api/";
-      var params = "book/all?page=2";
+      var params = "book/all";
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       String? _token;
       _token = prefs.getString('token').toString();
       var dio = Dio();
       var response = await dio.get(
         sUrl + params,
+        queryParameters: {
+          "page": page,
+        },
         options: Options(
           headers: {
             "Content-Type": "application/json",
@@ -40,7 +45,13 @@ class _ListBukuState extends State<ListBuku> {
       );
 
       if (response.data['status'] == 200) {
-        return response.data['data']['books']['data'];
+        setState(() {
+          List temp = response.data['data']['books']['data'];
+          listbaru = response.data['data']['books']['data'];
+          // temp.forEach((element) => listbaru.add(element));
+          // listbaru1.addAll(temp);
+          // log(listbaru.toString());
+        });
       } else {
         print('Error');
       }
@@ -60,16 +71,24 @@ class _ListBukuState extends State<ListBuku> {
 
   @override
   void initState() {
-    _listBuku = getBuku();
+    getBuku();
+    // listbaru = getBuku() as List?;
+
+    // setState(() async {
+    //   listbaru = await getBuku();
+    //   listbaru!.add(listbaru);
+    //   log(listbaru.toString());
+    // });
+    // _listBuku = getBuku();
     getRoles();
+    // refresh();
     super.initState();
   }
 
-  List? listbaru;
   void refresh() {
-    setState(() async {
-      listbaru = await getBuku();
-      listbaru!.add(await getBuku());
+    setState(() {
+      listbaru = getBuku() as List;
+      listbaru.add(listbaru);
       log(listbaru.toString());
     });
   }
@@ -87,49 +106,51 @@ class _ListBukuState extends State<ListBuku> {
           ),
         ),
       ),
-      body: Container(
-        padding: EdgeInsets.all(2),
-        child: FutureBuilder<List>(
-          future: _listBuku,
-          builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(
-                        snapshot.data![index]['judul'],
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      subtitle: Text('Ini adalah subtitle'),
-                      leading: GestureDetector(
-                        child: Container(
-                          child: Image.network(
-                            'http://192.168.0.142:8000/storage/' +
-                                snapshot.data![index]['path'],
-                            height: 50,
-                            width: 50,
-                          ),
+      body: Column(
+        children: [
+          Expanded(
+            // padding: EdgeInsets.all(2),
+            child: ListView.builder(
+                itemCount: listbaru.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: Text(
+                      listbaru[index]['judul'],
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Text('Ini adalah subtitle'),
+                    leading: GestureDetector(
+                      child: Container(
+                        child: Image.network(
+                          'http://192.168.0.142:8000/storage/' +
+                              listbaru[index]['path'],
+                          height: 50,
+                          width: 50,
                         ),
                       ),
-                      onTap: () async {
-                        // await Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => DetailBuku(
-                        //       snapshot.data![index],
-                        //     ),
-                        //   ),
-                        // );
-                        refresh();
-                      },
-                    );
-                  });
-            } else {
-              return Center(child: const CircularProgressIndicator());
-            }
-          },
-        ),
+                    ),
+                    onTap: () async {
+                      // await Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => DetailBuku(
+                      //       snapshot.data![index],
+                      //     ),
+                      //   ),
+                      // );
+                      refresh();
+                    },
+                  );
+                }),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              page++;
+              getBuku();
+            },
+            child: Text('next'),
+          ),
+        ],
       ),
       floatingActionButton: Visibility(
         visible: _visible,
