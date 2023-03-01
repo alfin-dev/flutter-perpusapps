@@ -34,7 +34,7 @@ class _TambahBukuState extends State<TambahBuku> {
   final TextEditingController _stokController = TextEditingController();
   final String sUrl = "http://192.168.0.142:8000/api/";
   var params = "book/create";
-  var kategori = "category/all";
+  var kategori = "category/all/all";
   var file;
   // Initial Selected Value
   String? _dropdownValue;
@@ -48,7 +48,7 @@ class _TambahBukuState extends State<TambahBuku> {
     setState(() {
       image = img;
       // file = File(img!.path);
-      log(file.toString());
+      log(image!.path.toString());
     });
   }
 
@@ -83,7 +83,6 @@ class _TambahBukuState extends State<TambahBuku> {
     });
 
     var dio = Dio();
-    print(image);
     if (widget.mode == FormMode.create) {
       FormData formData = FormData.fromMap({
         'judul': _judulController.text,
@@ -94,7 +93,6 @@ class _TambahBukuState extends State<TambahBuku> {
         'path':
             image != null ? await MultipartFile.fromFile(image!.path) : null,
       });
-      log(_dropdownValue.toString());
       try {
         var response = await dio.post(
           sUrl + params,
@@ -117,13 +115,17 @@ class _TambahBukuState extends State<TambahBuku> {
 
     if (widget.mode == FormMode.edit) {
       var params = "/update";
+      // var formData;
       var formData = FormData.fromMap({
         'judul': _judulController.text,
         'category_id': _dropdownValue,
         'pengarang': _pengarangController.text,
         'tahun': _tahunTerbitController.text,
         'stok': _stokController.text,
+        // 'path':
+        //     image != null ? await MultipartFile.fromFile(image!.path) : null,
       });
+
       try {
         var response = await dio.post(
           sUrl + 'book/' + _idBukuController.text + params,
@@ -135,12 +137,13 @@ class _TambahBukuState extends State<TambahBuku> {
             },
           ),
         );
+        log(response.toString());
         if (response.data['status'] == 200) {
           Navigator.of(context)..pop()..pop();
         }
         print(response.data['status']);
       } catch (e) {
-        print(e);
+        log(e.toString());
       }
     }
   }

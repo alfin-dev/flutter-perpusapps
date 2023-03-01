@@ -75,9 +75,11 @@ class _KategoriBukuState extends State<KategoriBuku> {
   }
 
   void refresh() {
-    setState(() {
-      getKategori();
-    });
+    if (mounted) {
+      setState(() {
+        getKategori();
+      });
+    }
   }
 
   @override
@@ -122,8 +124,11 @@ class _KategoriBukuState extends State<KategoriBuku> {
             ),
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              SizedBox(
+                width: 10,
+              ),
               // if (cek_next.toString() == 'null' &&
               //     cek_prev.toString() != 'null')
               ElevatedButton(

@@ -36,6 +36,9 @@ dependencies:
   shared_preferences: ^2.0.7
   dio: ^4.0.6
   infinite_scroll_pagination: ^3.2.0
+  url_launcher: ^6.0.10
+  file_picker: ^3.0.0
+  open_file: ^3.2.1
 
 dev_dependencies:
   flutter_test:
