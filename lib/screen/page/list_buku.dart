@@ -21,8 +21,10 @@ class _ListBukuState extends State<ListBuku> {
   String? _roles;
   bool _visible = false;
   List listbaru = [];
-  List listbaru1 = [];
   int page = 1;
+  String search = '';
+  TextEditingController _searchController = TextEditingController();
+
   // final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   Future getBuku() async {
@@ -33,11 +35,12 @@ class _ListBukuState extends State<ListBuku> {
       String? _token;
       _token = prefs.getString('token').toString();
       var dio = Dio();
+      var queryParams = <String, dynamic>{
+        "page": page,
+      };
       var response = await dio.get(
         sUrl + params,
-        queryParameters: {
-          "page": page,
-        },
+        queryParameters: queryParams,
         options: Options(
           headers: {
             "Content-Type": "application/json",
@@ -45,13 +48,16 @@ class _ListBukuState extends State<ListBuku> {
           },
         ),
       );
-
+      // log(response.data.toString());
       if (response.data['status'] == 200) {
         setState(() {
+          progress = false;
           List temp = response.data['data']['books']['data'];
-          // listbaru = response.data['data']['books']['data'];
-          temp.forEach((element) => listbaru.add(element));
-          // listbaru1.addAll(temp);
+          if (temp.length != 0) {
+            temp.forEach((element) => listbaru.add(element));
+            page++;
+          }
+          log(listbaru.length.toString());
         });
       } else {
         print('Error');
@@ -59,7 +65,50 @@ class _ListBukuState extends State<ListBuku> {
     } catch (e) {
       print(e);
     }
-    return [];
+  }
+
+  Future getBukuFiltered() async {
+    try {
+      setState(() {
+        page = 1;
+      });
+      final String sUrl = "http://192.168.0.142:8000/api/";
+      var params = "book/all";
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? _token;
+      _token = prefs.getString('token').toString();
+      var dio = Dio();
+      var queryParams = <String, dynamic>{
+        "page": page,
+        "search": _searchController.text,
+      };
+      var response = await dio.get(
+        sUrl + params,
+        queryParameters: queryParams,
+        options: Options(
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer ${_token}",
+          },
+        ),
+      );
+      // log(response.data.toString());
+      if (response.data['status'] == 200) {
+        setState(() {
+          listbaru = [];
+          progress = false;
+          List temp = response.data['data']['books']['data'];
+          if (temp.length != 0) {
+            temp.forEach((element) => listbaru.add(element));
+          }
+          log(listbaru.length.toString());
+        });
+      } else {
+        print('Error');
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future getBukuFirst() async {
@@ -85,10 +134,7 @@ class _ListBukuState extends State<ListBuku> {
 
       if (response.data['status'] == 200) {
         setState(() {
-          // List temp = response.data['data']['books']['data'];
           listbaru = response.data['data']['books']['data'];
-          // temp.forEach((element) => listbaru.add(element));
-          // listbaru1.addAll(temp);
         });
       } else {
         print('Error');
@@ -96,7 +142,6 @@ class _ListBukuState extends State<ListBuku> {
     } catch (e) {
       print(e);
     }
-    return [];
   }
 
   Future exportPdfBuku() async {
@@ -154,7 +199,6 @@ class _ListBukuState extends State<ListBuku> {
     } catch (e) {
       print(e);
     }
-    return [];
   }
 
   getRoles() async {
@@ -167,17 +211,8 @@ class _ListBukuState extends State<ListBuku> {
 
   @override
   void initState() {
-    getBuku();
-    // listbaru = getBuku() as List?;
-
-    // setState(() async {
-    //   listbaru = await getBuku();
-    //   listbaru!.add(listbaru);
-    //   log(listbaru.toString());
-    // });
-    // _listBuku = getBuku();
+    refreshFirst();
     getRoles();
-    // refresh();
     super.initState();
   }
 
@@ -192,23 +227,25 @@ class _ListBukuState extends State<ListBuku> {
 
   void refreshFirst() {
     setState(() {
-      log('refresh');
+      log('refresh first');
+      listbaru = [];
       page = 1;
-      getBukuFirst();
+      getBuku();
     });
   }
 
+  bool progress = false;
   ScrollController scrollController = ScrollController();
   bool onNotification(ScrollNotification scrollNotification) {
     if (scrollNotification is ScrollUpdateNotification) {
       if (scrollController.position.maxScrollExtent > scrollController.offset &&
           scrollController.position.maxScrollExtent - scrollController.offset <=
-              50) {
-        log('true');
+              9) {
         setState(() {
-          page++;
+          progress = true;
           getBuku();
         });
+        return true;
       }
     }
     return false;
@@ -255,49 +292,96 @@ class _ListBukuState extends State<ListBuku> {
       ),
       body: Column(
         children: [
-          Expanded(
-            // padding: EdgeInsets.all(2),
-            child: NotificationListener(
-              onNotification: onNotification,
-              child: ListView.builder(
-                  controller: scrollController,
-                  itemCount: listbaru.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    // if (listbaru.length != 10) {
-                    return ListTile(
-                      title: Text(
-                        listbaru[index]['judul'],
-                        overflow: TextOverflow.ellipsis,
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.all(7),
+                  child: TextFormField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: "Masukkan Judul Buku Anda",
+                      labelText: "Search Judul",
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.clear),
+                        onPressed: () {
+                          setState(() {
+                            _searchController.text = '';
+                          });
+                          refreshFirst();
+                        },
                       ),
-                      subtitle: Text('Ini adalah subtitle'),
-                      leading: GestureDetector(
-                        child: Container(
-                          child: Image.network(
-                            'http://192.168.0.142:8000/storage/' +
-                                listbaru[index]['path'],
-                            height: 50,
-                            width: 50,
-                          ),
-                        ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                      onTap: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailBuku(
-                              listbaru[index],
-                            ),
-                          ),
-                        );
-                        refreshFirst();
-                      },
-                    );
-                    // } else {
-                    //   return const CircularProgressIndicator();
-                    // }
-                  }),
-            ),
+                    ),
+                  ),
+                ),
+              ),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  primary: primaryButtonColor,
+                  minimumSize: const Size(100, 55),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                ),
+                onPressed: () {
+                  getBukuFiltered();
+                },
+                icon: Icon(Icons.search),
+                label: Text('Search'),
+              ),
+              SizedBox(
+                width: 5,
+              )
+            ],
           ),
+          listbaru.length == 0
+              ? Center(child: CircularProgressIndicator())
+              : Expanded(
+                  child: NotificationListener(
+                    onNotification: onNotification,
+                    child: ListView.builder(
+                        controller: scrollController,
+                        itemCount: listbaru.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          // if (listbaru.length != 10) {
+                          return ListTile(
+                            title: Text(
+                              listbaru[index]['judul'],
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            subtitle: Text('Ini adalah subtitle'),
+                            leading: GestureDetector(
+                              child: Container(
+                                child: Image.network(
+                                  'http://192.168.0.142:8000/storage/' +
+                                      listbaru[index]['path'],
+                                  height: 50,
+                                  width: 50,
+                                ),
+                              ),
+                            ),
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DetailBuku(
+                                    listbaru[index],
+                                  ),
+                                ),
+                              );
+                              refreshFirst();
+                            },
+                          );
+                          // } else {
+                          //   return const CircularProgressIndicator();
+                          // }
+                        }),
+                  ),
+                ),
+
           // ElevatedButton(
           //   onPressed: () {
           //     page++;
@@ -305,6 +389,15 @@ class _ListBukuState extends State<ListBuku> {
           //   },
           //   child: Text('next'),
           // ),
+          progress == true
+              ? Visibility(
+                  child: Center(child: CircularProgressIndicator()),
+                  visible: true,
+                )
+              : Visibility(
+                  child: Center(child: CircularProgressIndicator()),
+                  visible: false,
+                )
         ],
       ),
       floatingActionButton: Visibility(
@@ -317,12 +410,18 @@ class _ListBukuState extends State<ListBuku> {
                 builder: (context) => TambahBuku(mode: FormMode.create),
               ),
             );
-            refresh();
+            refreshFirst();
           },
           backgroundColor: primaryButtonColor,
           child: Icon(Icons.add),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 }

@@ -16,13 +16,14 @@ class listPeminjaman extends StatefulWidget {
 }
 
 class _listPeminjamanState extends State<listPeminjaman> {
-  late Future<List> _listBuku;
+  List _listBuku = [];
   String? _roles;
+  int page = 1;
   bool _visible = false;
 
   // final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-  Future<List> getBuku() async {
+  Future getBuku() async {
     try {
       final String sUrl = "http://192.168.0.142:8000/api/";
       var params = "peminjaman";
@@ -41,15 +42,39 @@ class _listPeminjamanState extends State<listPeminjaman> {
       );
 
       if (response.data['status'] == 200) {
+        setState(() {
+          progress = false;
+          List temp = response.data['data']['peminjaman']['data'];
+          if (temp.length != 0) {
+            temp.forEach((element) => _listBuku.add(element));
+            page++;
+          }
+        });
         // print(response.data['data']['books']);
-        return response.data['data']['peminjaman'];
+        // return response.data['data']['peminjaman']['data'];
       } else {
         print('Error');
       }
     } catch (e) {
-      print(e);
+      log(e.toString());
     }
-    return [];
+  }
+
+  bool progress = false;
+  ScrollController scrollController = ScrollController();
+  bool onNotification(ScrollNotification scrollNotification) {
+    if (scrollNotification is ScrollUpdateNotification) {
+      if (scrollController.position.maxScrollExtent > scrollController.offset &&
+          scrollController.position.maxScrollExtent - scrollController.offset <=
+              10) {
+        setState(() {
+          progress = true;
+          getBuku();
+        });
+        return true;
+      }
+    }
+    return false;
   }
 
   getRoles() async {
@@ -62,14 +87,23 @@ class _listPeminjamanState extends State<listPeminjaman> {
 
   @override
   void initState() {
-    _listBuku = getBuku();
+    getBuku();
     getRoles();
     super.initState();
   }
 
   void refresh() {
     setState(() {
-      _listBuku = getBuku();
+      getBuku();
+    });
+  }
+
+  void refreshFirst() {
+    setState(() {
+      log('refresh first');
+      _listBuku = [];
+      page = 1;
+      getBuku();
     });
   }
 
@@ -88,62 +122,38 @@ class _listPeminjamanState extends State<listPeminjaman> {
       ),
       body: Container(
         padding: EdgeInsets.all(2),
-        child: FutureBuilder<List>(
-          future: _listBuku,
-          builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(
-                        snapshot.data![index]['book']['judul'],
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      subtitle: Text('Ini adalah subtitle'),
-                      leading: GestureDetector(
-                        child: Container(
-                          child: Image.network(
-                            'http://192.168.0.142:8000/storage/' +
-                                snapshot.data![index]['book']['path'],
-                            height: 50,
-                            width: 50,
-                          ),
-                        ),
-                      ),
-                      onTap: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => detailPeminjaman(
-                              snapshot.data![index],
-                            ),
-                          ),
-                        );
-                        refresh();
-                      },
-                    );
-                  });
-            } else {
-              return Center(child: const CircularProgressIndicator());
-            }
-          },
-        ),
-      ),
-      floatingActionButton: Visibility(
-        visible: _visible,
-        child: FloatingActionButton(
-          onPressed: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TambahBuku(mode: FormMode.create),
+        child: ListView.builder(
+          itemCount: _listBuku.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(
+                _listBuku[index]['book']['judul'],
+                overflow: TextOverflow.ellipsis,
               ),
+              subtitle: Text('Ini adalah subtitle'),
+              leading: GestureDetector(
+                child: Container(
+                  child: Image.network(
+                    'http://192.168.0.142:8000/storage/' +
+                        _listBuku[index]['book']['path'],
+                    height: 50,
+                    width: 50,
+                  ),
+                ),
+              ),
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => detailPeminjaman(
+                      _listBuku[index],
+                    ),
+                  ),
+                );
+                refreshFirst();
+              },
             );
-            refresh();
           },
-          backgroundColor: primaryButtonColor,
-          child: Icon(Icons.add),
         ),
       ),
     );

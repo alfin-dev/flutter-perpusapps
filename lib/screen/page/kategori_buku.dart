@@ -18,10 +18,13 @@ class _KategoriBukuState extends State<KategoriBuku> {
   String? _roles;
   bool _visible = false;
   int page = 1;
-  String cek_prev = '';
-  String cek_next = '';
+  String cek_prev = 'null';
+  String cek_next = 'null';
 
   Future getKategori() async {
+    setState(() {
+      _listKategori = [];
+    });
     try {
       final String sUrl = "http://192.168.0.142:8000/api/";
       var params = "category/all";
@@ -95,67 +98,182 @@ class _KategoriBukuState extends State<KategoriBuku> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: _listKategori.length,
-              itemBuilder: (BuildContext context, int index) {
-                // print(snapshot.data![index]);
-                return ListTile(
-                  title: Text(
-                    _listKategori[index]['nama_kategori'],
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  onTap: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TambahKategori(
-                          mode: FormMode.edit,
-                          detail: _listKategori[index],
+      body: _listKategori.length == 0
+          ? Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.all(7),
+                        child: TextFormField(
+                          // controller: _searchController,
+                          decoration: InputDecoration(
+                            hintText: "Masukkan Judul Buku Anda",
+                            labelText: "Search Judul",
+                            suffixIcon: IconButton(
+                              icon: Icon(Icons.clear),
+                              onPressed: () {
+                                setState(() {
+                                  // _searchController.text = '';
+                                });
+                                // refreshFirst();
+                              },
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
                         ),
                       ),
-                    );
-                    refresh();
-                  },
-                );
-              },
+                    ),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        primary: primaryButtonColor,
+                        minimumSize: const Size(100, 55),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      ),
+                      onPressed: () {
+                        // getBukuFiltered();
+                      },
+                      icon: Icon(Icons.search),
+                      label: Text('Search'),
+                    ),
+                    SizedBox(
+                      width: 5,
+                    )
+                  ],
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _listKategori.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      // print(snapshot.data![index]);
+                      return ListTile(
+                        title: Text(
+                          _listKategori[index]['nama_kategori'],
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        onTap: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TambahKategori(
+                                mode: FormMode.edit,
+                                detail: _listKategori[index],
+                              ),
+                            ),
+                          );
+                          refresh();
+                        },
+                      );
+                    },
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 10,
+                    ),
+                    if (cek_prev.toString() != 'null' &&
+                        cek_next.toString() != 'null')
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: primaryButtonColor),
+                            onPressed: () {
+                              page--;
+                              getKategori();
+                            },
+                            child: Text('Prev'),
+                          ),
+                          SizedBox(width: 10),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: primaryButtonColor),
+                            onPressed: () {
+                              page++;
+                              getKategori();
+                            },
+                            child: Text('Next'),
+                          ),
+                        ],
+                      ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    if (cek_prev.toString() == 'null' &&
+                        cek_next.toString() != 'null')
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: primaryButtonColor),
+                            onPressed: null,
+                            child: Text('Prev'),
+                          ),
+                          SizedBox(width: 10),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: primaryButtonColor),
+                            onPressed: () {
+                              page++;
+                              getKategori();
+                            },
+                            child: Text('Next'),
+                          ),
+                        ],
+                      ),
+                    if (cek_prev.toString() != 'null' &&
+                        cek_next.toString() == 'null')
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: primaryButtonColor),
+                            onPressed: () {
+                              page--;
+                              getKategori();
+                            },
+                            child: Text('Prev'),
+                          ),
+                          SizedBox(width: 10),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: primaryButtonColor),
+                            onPressed: null,
+                            child: Text('Next'),
+                          ),
+                        ],
+                      ),
+                    if (cek_prev.toString() == 'null' &&
+                        cek_next.toString() == 'null')
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: primaryButtonColor),
+                            onPressed: null,
+                            child: Text('Prev'),
+                          ),
+                          SizedBox(width: 10),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: primaryButtonColor),
+                            onPressed: null,
+                            child: Text('Next'),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+              ],
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 10,
-              ),
-              // if (cek_next.toString() == 'null' &&
-              //     cek_prev.toString() != 'null')
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: primaryButtonColor),
-                onPressed: () {
-                  page--;
-                  getKategori();
-                },
-                child: Text('Prev'),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              // if (cek_prev.toString() == 'null' &&
-              //     cek_next.toString() != 'null')
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: primaryButtonColor),
-                onPressed: () {
-                  page++;
-                  getKategori();
-                },
-                child: Text('Next'),
-              ),
-            ],
-          ),
-        ],
-      ),
       floatingActionButton: Visibility(
         visible: _visible,
         child: FloatingActionButton(

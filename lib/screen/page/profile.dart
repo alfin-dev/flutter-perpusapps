@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:perpus_app/screen/page/detail_buku.dart';
+import 'package:perpus_app/template.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
@@ -11,10 +14,18 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  late Future<List> _listUser;
+  // late Future<List> _listUser;
+  List member = [];
+  String cek_prev = 'null';
+  String cek_next = 'null';
+  int page = 1;
+
   // final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-  Future<List> getUsers() async {
+  Future getUsers() async {
+    setState(() {
+      member = [];
+    });
     try {
       final String sUrl = "http://192.168.0.142:8000/api/";
       var params = "user/all";
@@ -24,6 +35,9 @@ class _ProfileState extends State<Profile> {
       var dio = Dio();
       var response = await dio.get(
         sUrl + params,
+        queryParameters: {
+          "page": page,
+        },
         options: Options(
           headers: {
             "Content-Type": "application/json",
@@ -33,20 +47,22 @@ class _ProfileState extends State<Profile> {
       );
 
       if (response.data['status'] == 200) {
-        // print(response.data['data']['books']);
-        return response.data['data']['users'];
+        setState(() {
+          cek_prev = response.data['data']['users']['prev_page_url'].toString();
+          cek_next = response.data['data']['users']['next_page_url'].toString();
+          member = response.data['data']['users']['data'];
+        });
       } else {
         print('Error');
       }
     } catch (e) {
       print(e);
     }
-    return [];
   }
 
   @override
   void initState() {
-    _listUser = getUsers();
+    getUsers();
     super.initState();
   }
 
@@ -67,37 +83,130 @@ class _ProfileState extends State<Profile> {
           SizedBox(width: 15),
         ],
       ),
-      body: Container(
-        padding: EdgeInsets.all(2),
-        child: FutureBuilder<List>(
-          future: _listUser,
-          builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(snapshot.data![index]['name']),
-                      subtitle: Text(snapshot.data![index]['email'] +
-                          ' - ' +
-                          snapshot.data![index]['roles'][0]['name']),
-                      leading: ClipOval(
-                        child: SizedBox.fromSize(
-                          size: Size.fromRadius(20),
-                          child: Image.network(
-                            'https://www.transparentpng.com/thumb/happy-person/VJdvLa-download-happy-blackman-png.png',
-                            fit: BoxFit.cover,
+      body: member.length == 0
+          ? Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: member.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        title: Text(member[index]['name']),
+                        subtitle: Text(member[index]['email'] +
+                            ' - ' +
+                            member[index]['roles'][0]['name']),
+                        leading: ClipOval(
+                          child: SizedBox.fromSize(
+                            size: Size.fromRadius(20),
+                            child: Image.network(
+                              'https://www.transparentpng.com/thumb/happy-person/VJdvLa-download-happy-blackman-png.png',
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
+                      );
+                    },
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 10,
+                    ),
+                    if (cek_prev.toString() != 'null' &&
+                        cek_next.toString() != 'null')
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: primaryButtonColor),
+                            onPressed: () {
+                              page--;
+                              getUsers();
+                            },
+                            child: Text('Prev'),
+                          ),
+                          SizedBox(width: 10),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: primaryButtonColor),
+                            onPressed: () {
+                              page++;
+                              getUsers();
+                            },
+                            child: Text('Next'),
+                          ),
+                        ],
                       ),
-                    );
-                  });
-            } else {
-              return Center(child: const CircularProgressIndicator());
-            }
-          },
-        ),
-      ),
+                    if (cek_prev.toString() == 'null' &&
+                        cek_next.toString() != 'null')
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: primaryButtonColor),
+                            onPressed: null,
+                            child: Text('Prev'),
+                          ),
+                          SizedBox(width: 10),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: primaryButtonColor),
+                            onPressed: () {
+                              page++;
+                              getUsers();
+                            },
+                            child: Text('Next'),
+                          ),
+                        ],
+                      ),
+                    if (cek_prev.toString() != 'null' &&
+                        cek_next.toString() == 'null')
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: primaryButtonColor),
+                            onPressed: () {
+                              page--;
+                              getUsers();
+                            },
+                            child: Text('Prev'),
+                          ),
+                          SizedBox(width: 10),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: primaryButtonColor),
+                            onPressed: null,
+                            child: Text('Next'),
+                          ),
+                        ],
+                      ),
+                    if (cek_prev.toString() == 'null' &&
+                        cek_next.toString() == 'null')
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: primaryButtonColor),
+                            onPressed: null,
+                            child: Text('Prev'),
+                          ),
+                          SizedBox(width: 10),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: primaryButtonColor),
+                            onPressed: null,
+                            child: Text('Next'),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+              ],
+            ),
 
       // ListView(
       //   children: [

@@ -65,7 +65,7 @@ class _DetailBukuState extends State<DetailBuku> {
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Hapus Kategori'),
+          title: const Text('Hapus Buku'),
           content: SingleChildScrollView(
             child: ListBody(
               children: const <Widget>[
