@@ -112,7 +112,7 @@ class _Dashboard extends State<Dashboard> {
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.person_add),
-                    title: Text('List Profile'),
+                    title: Text('List User'),
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.person),

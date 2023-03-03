@@ -50,8 +50,6 @@ class _listPeminjamanState extends State<listPeminjaman> {
             page++;
           }
         });
-        // print(response.data['data']['books']);
-        // return response.data['data']['peminjaman']['data'];
       } else {
         print('Error');
       }

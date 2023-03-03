@@ -20,6 +20,8 @@ class _KategoriBukuState extends State<KategoriBuku> {
   int page = 1;
   String cek_prev = 'null';
   String cek_next = 'null';
+  TextEditingController _searchController = TextEditingController();
+  String _search = '';
 
   Future getKategori() async {
     setState(() {
@@ -32,11 +34,13 @@ class _KategoriBukuState extends State<KategoriBuku> {
       String? _token;
       _token = prefs.getString('token').toString();
       var dio = Dio();
+      var queryParams = <String, dynamic>{
+        "page": page,
+        "search": _search,
+      };
       var response = await dio.get(
         sUrl + params,
-        queryParameters: {
-          "page": page,
-        },
+        queryParameters: queryParams,
         options: Options(
           headers: {
             "Content-Type": "application/json",
@@ -45,6 +49,7 @@ class _KategoriBukuState extends State<KategoriBuku> {
         ),
       );
 
+      // log(response.data.toString());
       if (response.data['status'] == 200) {
         setState(() {
           cek_prev =
@@ -85,6 +90,15 @@ class _KategoriBukuState extends State<KategoriBuku> {
     }
   }
 
+  Future search() async {
+    setState(() {
+      page = 1;
+      _search = _searchController.text;
+      log(_search.toString());
+      getKategori();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,56 +112,58 @@ class _KategoriBukuState extends State<KategoriBuku> {
           ),
         ),
       ),
-      body: _listKategori.length == 0
-          ? Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        margin: EdgeInsets.all(7),
-                        child: TextFormField(
-                          // controller: _searchController,
-                          decoration: InputDecoration(
-                            hintText: "Masukkan Judul Buku Anda",
-                            labelText: "Search Judul",
-                            suffixIcon: IconButton(
-                              icon: Icon(Icons.clear),
-                              onPressed: () {
-                                setState(() {
-                                  // _searchController.text = '';
-                                });
-                                // refreshFirst();
-                              },
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                          ),
-                        ),
+      body: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.all(7),
+                  child: TextFormField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: "Masukkan Kategori Buku Anda",
+                      labelText: "Search Kategori",
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.clear),
+                        onPressed: () {
+                          setState(() {
+                            _searchController.text = '';
+                            page = 1;
+                            _search = '';
+                          });
+                          getKategori();
+                        },
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
                       ),
                     ),
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        primary: primaryButtonColor,
-                        minimumSize: const Size(100, 55),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                      ),
-                      onPressed: () {
-                        // getBukuFiltered();
-                      },
-                      icon: Icon(Icons.search),
-                      label: Text('Search'),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    )
-                  ],
+                  ),
                 ),
-                Expanded(
+              ),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  primary: primaryButtonColor,
+                  minimumSize: const Size(60, 55),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                ),
+                onPressed: () {
+                  search();
+                },
+                icon: Icon(Icons.search),
+                label: Text('Search'),
+              ),
+              SizedBox(
+                width: 5,
+              )
+            ],
+          ),
+          _listKategori.length == 0
+              ? Center(child: CircularProgressIndicator())
+              : Expanded(
                   child: ListView.builder(
                     itemCount: _listKategori.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -173,107 +189,107 @@ class _KategoriBukuState extends State<KategoriBuku> {
                     },
                   ),
                 ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 10,
+              ),
+              if (cek_prev.toString() != 'null' &&
+                  cek_next.toString() != 'null')
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      width: 10,
+                    ElevatedButton(
+                      style:
+                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      onPressed: () {
+                        page--;
+                        getKategori();
+                      },
+                      child: Text('Prev'),
                     ),
-                    if (cek_prev.toString() != 'null' &&
-                        cek_next.toString() != 'null')
-                      Row(
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                primary: primaryButtonColor),
-                            onPressed: () {
-                              page--;
-                              getKategori();
-                            },
-                            child: Text('Prev'),
-                          ),
-                          SizedBox(width: 10),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                primary: primaryButtonColor),
-                            onPressed: () {
-                              page++;
-                              getKategori();
-                            },
-                            child: Text('Next'),
-                          ),
-                        ],
-                      ),
-                    SizedBox(
-                      width: 10,
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                      style:
+                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      onPressed: () {
+                        page++;
+                        getKategori();
+                      },
+                      child: Text('Next'),
                     ),
-                    if (cek_prev.toString() == 'null' &&
-                        cek_next.toString() != 'null')
-                      Row(
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                primary: primaryButtonColor),
-                            onPressed: null,
-                            child: Text('Prev'),
-                          ),
-                          SizedBox(width: 10),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                primary: primaryButtonColor),
-                            onPressed: () {
-                              page++;
-                              getKategori();
-                            },
-                            child: Text('Next'),
-                          ),
-                        ],
-                      ),
-                    if (cek_prev.toString() != 'null' &&
-                        cek_next.toString() == 'null')
-                      Row(
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                primary: primaryButtonColor),
-                            onPressed: () {
-                              page--;
-                              getKategori();
-                            },
-                            child: Text('Prev'),
-                          ),
-                          SizedBox(width: 10),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                primary: primaryButtonColor),
-                            onPressed: null,
-                            child: Text('Next'),
-                          ),
-                        ],
-                      ),
-                    if (cek_prev.toString() == 'null' &&
-                        cek_next.toString() == 'null')
-                      Row(
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                primary: primaryButtonColor),
-                            onPressed: null,
-                            child: Text('Prev'),
-                          ),
-                          SizedBox(width: 10),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                primary: primaryButtonColor),
-                            onPressed: null,
-                            child: Text('Next'),
-                          ),
-                        ],
-                      ),
                   ],
                 ),
-              ],
-            ),
+              SizedBox(
+                width: 10,
+              ),
+              if (cek_prev.toString() == 'null' &&
+                  cek_next.toString() != 'null')
+                Row(
+                  children: [
+                    ElevatedButton(
+                      style:
+                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      onPressed: null,
+                      child: Text('Prev'),
+                    ),
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                      style:
+                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      onPressed: () {
+                        page++;
+                        getKategori();
+                      },
+                      child: Text('Next'),
+                    ),
+                  ],
+                ),
+              if (cek_prev.toString() != 'null' &&
+                  cek_next.toString() == 'null')
+                Row(
+                  children: [
+                    ElevatedButton(
+                      style:
+                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      onPressed: () {
+                        page--;
+                        getKategori();
+                      },
+                      child: Text('Prev'),
+                    ),
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                      style:
+                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      onPressed: null,
+                      child: Text('Next'),
+                    ),
+                  ],
+                ),
+              if (cek_prev.toString() == 'null' &&
+                  cek_next.toString() == 'null')
+                Row(
+                  children: [
+                    ElevatedButton(
+                      style:
+                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      onPressed: null,
+                      child: Text('Prev'),
+                    ),
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                      style:
+                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      onPressed: null,
+                      child: Text('Next'),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+        ],
+      ),
       floatingActionButton: Visibility(
         visible: _visible,
         child: FloatingActionButton(

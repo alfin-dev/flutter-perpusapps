@@ -92,7 +92,6 @@ class _ListBukuState extends State<ListBuku> {
           },
         ),
       );
-      // log(response.data.toString());
       if (response.data['status'] == 200) {
         setState(() {
           listbaru = [];
@@ -321,7 +320,7 @@ class _ListBukuState extends State<ListBuku> {
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   primary: primaryButtonColor,
-                  minimumSize: const Size(100, 55),
+                  minimumSize: const Size(50, 55),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5.0),
                   ),
@@ -352,7 +351,8 @@ class _ListBukuState extends State<ListBuku> {
                               listbaru[index]['judul'],
                               overflow: TextOverflow.ellipsis,
                             ),
-                            subtitle: Text('Ini adalah subtitle'),
+                            subtitle: Text(
+                                listbaru[index]['category']['nama_kategori']),
                             leading: GestureDetector(
                               child: Container(
                                 child: Image.network(
