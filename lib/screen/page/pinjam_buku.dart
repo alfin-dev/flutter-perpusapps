@@ -45,6 +45,7 @@ class _pinjamBukuState extends State<pinjamBuku> {
       'id_member': _id,
       'tanggal_peminjaman': _textDateStartController.text,
       'tanggal_pengembalian': _textDateEndController.text,
+      'bypass': '1'
     });
 
     try {

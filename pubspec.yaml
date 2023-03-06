@@ -39,6 +39,7 @@ dependencies:
   url_launcher: ^6.0.10
   file_picker: ^3.0.0
   open_file: ^3.2.1
+  font_awesome_flutter: ^10.4.0
 
 dev_dependencies:
   flutter_test:
