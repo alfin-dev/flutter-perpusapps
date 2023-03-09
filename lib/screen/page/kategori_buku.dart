@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:perpus_app/mastervariable.dart';
 import 'package:perpus_app/screen/page/tambah_kategori.dart';
 import 'package:perpus_app/template.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +29,6 @@ class _KategoriBukuState extends State<KategoriBuku> {
       _listKategori = [];
     });
     try {
-      final String sUrl = "http://192.168.0.142:8000/api/";
       var params = "category/all";
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       String? _token;

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:perpus_app/main.dart';
 import 'package:perpus_app/template.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:perpus_app/mastervariable.dart';
 
 class registerPage extends StatefulWidget {
   const registerPage({Key? key}) : super(key: key);
@@ -19,7 +20,6 @@ class _registerPageState extends State<registerPage> {
   final TextEditingController _retypePasswordController =
       TextEditingController();
   bool visible = false;
-  final String sUrl = "http://192.168.0.142:8000/api/";
   Login? login;
   String? _token;
 

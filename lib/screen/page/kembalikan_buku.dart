@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:perpus_app/mastervariable.dart';
 import 'package:perpus_app/screen/dashboard.dart';
 import 'package:perpus_app/template.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,7 +21,6 @@ class _kembalikanBukuState extends State<kembalikanBuku> {
   DateTime _selectedDate = DateTime.now();
   DateTime _selectedDateBack = DateTime.now();
   TextEditingController _textDateController = TextEditingController();
-  final String sUrl = "http://192.168.0.142:8000/api/";
 
   @override
   void initState() {
@@ -108,7 +108,7 @@ class _kembalikanBukuState extends State<kembalikanBuku> {
           ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: Image.network(
-              'http://192.168.0.142:8000/storage/' +
+              url + 'storage/' +
                   widget.dataBuku['book']['path'],
               width: 200,
               height: 250,

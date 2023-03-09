@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:perpus_app/mastervariable.dart';
 import 'package:perpus_app/template.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,7 +20,6 @@ class exportBuku extends StatefulWidget {
 class _exportBukuState extends State<exportBuku> {
   final TextEditingController txtFilePicker = TextEditingController();
   File? file;
-  final String sUrl = "http://192.168.0.142:8000/api/";
   // fungsi untuk select file
   selectFile() async {
     FilePickerResult? result = await FilePicker.platform
@@ -53,7 +53,7 @@ class _exportBukuState extends State<exportBuku> {
       );
 
       if (response.data['status'] == 200) {
-        await launch("http://192.168.0.142:8000/" + response.data['path']);
+        await launch(url + response.data['path']);
       } else {
         print('Error');
       }

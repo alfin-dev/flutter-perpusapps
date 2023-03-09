@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:perpus_app/mastervariable.dart';
 import 'package:perpus_app/template.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,7 +19,7 @@ class _pinjamBukuState extends State<pinjamBuku> {
   DateTime _selectedDateBack = DateTime.now();
   TextEditingController _textDateStartController = TextEditingController();
   TextEditingController _textDateEndController = TextEditingController();
-  final String sUrl = "http://192.168.0.142:8000/api/";
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -27,6 +28,9 @@ class _pinjamBukuState extends State<pinjamBuku> {
   }
 
   _insertPeminjaman() async {
+    setState(() {
+      isLoading = true;
+    });
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? _token;
     var _id;
@@ -60,7 +64,18 @@ class _pinjamBukuState extends State<pinjamBuku> {
         ),
       );
       if (response.data['status'] == 201) {
+        final snackBar = SnackBar(
+          content: Text(response.data['message'].toString()),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
         Navigator.pop(context);
+      } else {
+        final snackBar = SnackBar(
+          content: Text(response.data['message']['message'].toString()),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
       print(response.data['status']);
     } catch (e) {
@@ -127,7 +142,7 @@ class _pinjamBukuState extends State<pinjamBuku> {
           ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: Image.network(
-              'http://192.168.0.142:8000/storage/' + widget.dataBuku['path'],
+              url + 'storage/' + widget.dataBuku['path'],
               width: 200,
               height: 250,
             ),
@@ -210,13 +225,26 @@ class _pinjamBukuState extends State<pinjamBuku> {
               children: [
                 Container(
                   alignment: Alignment.bottomCenter,
-                  child: ElevatedButton(
+                  child: ElevatedButton.icon(
                     style:
                         ElevatedButton.styleFrom(primary: primaryButtonColor),
-                    onPressed: () async {
-                      await _insertPeminjaman();
-                    },
-                    child: Text('Pinjam Buku'),
+                    onPressed: (isLoading)
+                        ? null
+                        : () async {
+                            await _insertPeminjaman();
+                          },
+                    icon: (isLoading)
+                        ? Container(
+                            width: 24,
+                            height: 24,
+                            padding: const EdgeInsets.all(2.0),
+                            child: const CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 3,
+                            ),
+                          )
+                        : const Icon(Icons.playlist_add_rounded),
+                    label: const Text('Pinjam Buku'),
                   ),
                 ),
               ],

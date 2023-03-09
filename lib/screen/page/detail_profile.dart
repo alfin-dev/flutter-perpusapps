@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:perpus_app/main.dart';
+import 'package:perpus_app/mastervariable.dart';
 import 'package:perpus_app/template.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,7 +18,6 @@ class _detailProfileState extends State<detailProfile> {
   String? _email = 'mail@example.com';
 
   Future<Map> _getDetail() async {
-    final String sUrl = "http://192.168.0.142:8000/api/";
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? _token;
     var _id;
@@ -36,7 +36,6 @@ class _detailProfileState extends State<detailProfile> {
           },
         ),
       );
-      print(response.data['data']['user']);
       if (response.data['status'] == 200) {
         setState(() {
           _name = response.data['data']['user']['name'];
@@ -88,10 +87,9 @@ class _detailProfileState extends State<detailProfile> {
             ),
             ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
-              child: Image.network(
-                'https://toko-muslim.com/images/product/2017/03/1.png',
-                width: 200,
-                height: 250,
+              child: Icon(
+                Icons.person,
+                size: 200,
               ),
             ),
             Container(

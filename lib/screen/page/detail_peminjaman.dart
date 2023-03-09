@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:perpus_app/mastervariable.dart';
 import 'package:perpus_app/screen/page/kembalikan_buku.dart';
 import 'package:perpus_app/screen/page/pinjam_buku.dart';
 import 'package:perpus_app/screen/page/tambah_buku.dart';
@@ -31,7 +32,6 @@ class _detailPeminjamanState extends State<detailPeminjaman> {
   }
 
   _delete() async {
-    final String sUrl = "http://192.168.0.142:8000/api/";
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? _token;
     var _id;
@@ -124,8 +124,7 @@ class _detailPeminjamanState extends State<detailPeminjaman> {
           ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: Image.network(
-              'http://192.168.0.142:8000/storage/' +
-                  widget.dataBuku['book']['path'],
+              url + 'storage/' + widget.dataBuku['book']['path'],
               width: 200,
               height: 250,
             ),
@@ -171,7 +170,7 @@ class _detailPeminjamanState extends State<detailPeminjaman> {
                   Container(
                     alignment: Alignment.bottomCenter,
                     child: Text(
-                      'Tanggal Pengembalian : ' +
+                      'Pengembalian : ' +
                           widget.dataBuku['tanggal_pengembalian'],
                       style:
                           TextStyle(fontSize: 25, fontWeight: FontWeight.bold),

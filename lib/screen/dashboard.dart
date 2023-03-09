@@ -26,9 +26,10 @@ class _Dashboard extends State<Dashboard> {
 
   getRoles() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _roles = prefs.getString('roles').toString();
-      if (_roles == 'admin')
+    _roles = prefs.getString('roles').toString();
+    log(_roles.toString());
+    if (_roles == 'admin') {
+      setState(() {
         _children = [
           ListBuku(),
           KategoriBuku(),
@@ -36,22 +37,31 @@ class _Dashboard extends State<Dashboard> {
           Profile(),
           detailProfile(),
         ];
-      if (_roles == 'member')
+      });
+    } else {
+      setState(() {
         _children = [
           ListBuku(),
-          KategoriBuku(),
           Home(),
           listPeminjaman(),
           detailProfile(),
         ];
-    });
+      });
+    }
   }
 
   @override
   void initState() {
+    init();
+    //  getRoles();
+    // setState(() {
+    //   _roles = _roles;
+    // });
     super.initState();
-    getRoles();
-    _roles = _roles;
+  }
+
+  Future init() async {
+    await getRoles();
   }
 
   int _selectedNavbar = 2;
@@ -66,64 +76,84 @@ class _Dashboard extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: _children[_selectedNavbar],
-        bottomNavigationBar: _roles != 'admin'
-            ? BottomNavigationBar(
-                items: const <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.book),
-                    title: Text('List Buku'),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.catching_pokemon),
-                    title: Text('Kategori Buku'),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    title: Text('Home'),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.bookmark_added_rounded),
-                    title: Text('List Peminjaman'),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.person),
-                    title: Text('Profile'),
-                  )
-                ],
-                currentIndex: _selectedNavbar,
-                selectedItemColor: Color(0xff130160),
-                unselectedItemColor: Colors.grey,
-                showUnselectedLabels: true,
-                onTap: _changeSelectedNavBar,
+        bottomNavigationBar: (_roles != 'admin')
+            ? Container(
+                decoration: BoxDecoration(
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                        color: Colors.black54,
+                        blurRadius: 10.0,
+                        offset: Offset(0.0, 0.75))
+                  ],
+                ),
+                child: BottomNavigationBar(
+                  items: const <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.book),
+                      title: Text('List Buku'),
+                    ),
+                    // BottomNavigationBarItem(
+                    //   icon: Icon(Icons.catching_pokemon),
+                    //   title: Text('Kategori Buku'),
+                    // ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.home),
+                      title: Text('Home'),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.bookmark_added_rounded),
+                      title: Text('List Peminjaman'),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.person),
+                      title: Text('Profile'),
+                    )
+                  ],
+                  currentIndex: _selectedNavbar,
+                  selectedItemColor: Color(0xff130160),
+                  unselectedItemColor: Colors.grey,
+                  showUnselectedLabels: true,
+                  onTap: _changeSelectedNavBar,
+                ),
               )
-            : BottomNavigationBar(
-                items: const <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.book),
-                    title: Text('List Buku'),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.catching_pokemon),
-                    title: Text('Kategori Buku'),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    title: Text('Home'),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.person_add),
-                    title: Text('List User'),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.person),
-                    title: Text('Profile'),
-                  )
-                ],
-                currentIndex: _selectedNavbar,
-                selectedItemColor: Color(0xff130160),
-                unselectedItemColor: Colors.grey,
-                showUnselectedLabels: true,
-                onTap: _changeSelectedNavBar,
+            : Container(
+                decoration: BoxDecoration(
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                        color: Colors.black54,
+                        blurRadius: 10.0,
+                        offset: Offset(0.0, 0.75))
+                  ],
+                ),
+                child: BottomNavigationBar(
+                  items: const <BottomNavigationBarItem>[
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.book),
+                      title: Text('List Buku'),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.catching_pokemon),
+                      title: Text('Kategori Buku'),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.home),
+                      title: Text('Home'),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.person_add),
+                      title: Text('List User'),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.person),
+                      title: Text('Profile'),
+                    )
+                  ],
+                  currentIndex: _selectedNavbar,
+                  selectedItemColor: Color(0xff130160),
+                  unselectedItemColor: Colors.grey,
+                  showUnselectedLabels: true,
+                  onTap: _changeSelectedNavBar,
+                ),
               ));
   }
 }

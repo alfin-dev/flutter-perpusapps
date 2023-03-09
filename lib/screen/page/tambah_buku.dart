@@ -6,6 +6,7 @@ import 'package:checkbox_formfield/checkbox_formfield.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:perpus_app/mastervariable.dart';
 import 'package:perpus_app/screen/page/list_buku.dart';
 import 'package:perpus_app/template.dart';
 import 'package:image_picker/image_picker.dart';
@@ -32,10 +33,10 @@ class _TambahBukuState extends State<TambahBuku> {
   final TextEditingController _pengarangController = TextEditingController();
   final TextEditingController _tahunTerbitController = TextEditingController();
   final TextEditingController _stokController = TextEditingController();
-  final String sUrl = "http://192.168.0.142:8000/api/";
   var params = "book/create";
   var kategori = "category/all/all";
   var file;
+  bool loading = false;
   // Initial Selected Value
   String? _dropdownValue;
   // var year = DateTime.now();
@@ -71,6 +72,9 @@ class _TambahBukuState extends State<TambahBuku> {
   }
 
   _insertBuku() async {
+    setState(() {
+      loading = true;
+    });
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? _token;
     _token = prefs.getString('token').toString();
@@ -105,6 +109,9 @@ class _TambahBukuState extends State<TambahBuku> {
           ),
         );
         if (response.data['status'] == 201) {
+          setState(() {
+            loading = false;
+          });
           Navigator.pop(context);
         }
         print(response.data['status']);
@@ -125,6 +132,17 @@ class _TambahBukuState extends State<TambahBuku> {
         // 'path':
         //     image != null ? await MultipartFile.fromFile(image!.path) : null,
       });
+      if (image != null) {
+        formData = FormData.fromMap({
+          'judul': _judulController.text,
+          'category_id': _dropdownValue,
+          'pengarang': _pengarangController.text,
+          'tahun': _tahunTerbitController.text,
+          'stok': _stokController.text,
+          'path':
+              image != null ? await MultipartFile.fromFile(image!.path) : null,
+        });
+      }
 
       try {
         var response = await dio.post(
@@ -154,25 +172,19 @@ class _TambahBukuState extends State<TambahBuku> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          title: Text('Pilih cover buku'),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          content: Container(
-            height: MediaQuery.of(context).size.height / 10,
-            child: Column(
+          content: ElevatedButton(
+            style: ElevatedButton.styleFrom(primary: primaryButtonColor),
+            //if user click this button, user can upload image from gallery
+            onPressed: () {
+              Navigator.pop(context);
+              getImage(ImageSource.gallery);
+            },
+            child: Row(
               children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: primaryButtonColor),
-                  //if user click this button, user can upload image from gallery
-                  onPressed: () {
-                    Navigator.pop(context);
-                    getImage(ImageSource.gallery);
-                  },
-                  child: Row(
-                    children: [
-                      Icon(Icons.image),
-                      Text('From Gallery'),
-                    ],
-                  ),
-                ),
+                Icon(Icons.image),
+                Text('From Gallery'),
               ],
             ),
           ),
@@ -301,22 +313,22 @@ class _TambahBukuState extends State<TambahBuku> {
                 ),
               ),
               SizedBox(height: 10),
-              CheckboxListTileFormField(
-                title: Text('Buku Tersedia?'),
-                onSaved: (bool? value) {
-                  print(value);
-                },
-                validator: (bool? value) {
-                  if (value!) {
-                    return 'Ya';
-                  } else {
-                    return 'Tidak';
-                  }
-                },
-                onChanged: (value) {},
-                autovalidateMode: AutovalidateMode.always,
-                contentPadding: EdgeInsets.all(1),
-              ),
+              // CheckboxListTileFormField(
+              //   title: Text('Buku Tersedia?'),
+              //   onSaved: (bool? value) {
+              //     print(value);
+              //   },
+              //   validator: (bool? value) {
+              //     if (value!) {
+              //       return 'Ya';
+              //     } else {
+              //       return 'Tidak';
+              //     }
+              //   },
+              //   onChanged: (value) {},
+              //   autovalidateMode: AutovalidateMode.always,
+              //   contentPadding: EdgeInsets.all(1),
+              // ),
               SizedBox(height: 10),
               Container(
                 width: double.infinity,
@@ -345,26 +357,62 @@ class _TambahBukuState extends State<TambahBuku> {
                           //to show image, you type like this.
                           File(image!.path),
                           fit: BoxFit.cover,
-                          width: MediaQuery.of(context).size.width,
-                          height: 300,
+                          width: 200,
+                          height: 250,
                         ),
                       ),
                     )
-                  : Center(
-                      child: Text(
-                        "No Image",
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
+                  : (widget.mode == FormMode.edit)
+                      ? image != null
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.file(
+                                  //to show image, you type like this.
+                                  File(image!.path),
+                                  fit: BoxFit.cover,
+                                  width: 200,
+                                  height: 250,
+                                ),
+                              ),
+                            )
+                          : Center(
+                              child: Image.network(
+                                url +
+                                    'storage/' +
+                                    widget.detail!['path'].toString(),
+                                width: 200,
+                                height: 250,
+                              ),
+                            )
+                      : Center(
+                          child: Text(
+                            "No Image Selected",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
               SizedBox(height: 50),
               Container(
                 alignment: Alignment.bottomCenter,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(primary: primaryButtonColor),
-                  onPressed: () async {
-                    await _insertBuku();
-                  },
-                  child: Text('Simpan'),
+                  onPressed: loading
+                      ? null
+                      : () async {
+                          await _insertBuku();
+                        },
+                  child: loading
+                      ? Container(
+                          width: 15,
+                          height: 15,
+                          child: CircularProgressIndicator(
+                            valueColor: new AlwaysStoppedAnimation<Color>(
+                                primaryButtonColor),
+                          ),
+                        )
+                      : Text('Simpan'),
                 ),
               ),
             ],

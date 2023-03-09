@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:checkbox_formfield/checkbox_formfield.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:perpus_app/mastervariable.dart';
 import 'package:perpus_app/template.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,7 +21,6 @@ class TambahKategori extends StatefulWidget {
 class _TambahKategoriState extends State<TambahKategori> {
   final TextEditingController _kategoriController = TextEditingController();
   final TextEditingController _idKategoriController = TextEditingController();
-  final String sUrl = "http://192.168.0.142:8000/api/";
   late String? nama_kategori;
 
   _insertKategori() async {
