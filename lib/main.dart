@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: Color(0xFFFFFFFF),
+        primaryColor: themeColor,
       ),
       home: LoginPage(),
     );
@@ -56,6 +56,7 @@ class _LoginPageState extends State<LoginPage> {
   bool visible = false;
   Login? login;
   String? _token;
+  bool proses = false;
 
   @override
   void initState() {
@@ -82,6 +83,7 @@ class _LoginPageState extends State<LoginPage> {
 
   _cekLogin() async {
     setState(() {
+      proses = true;
       visible = true;
       _userNameController.text;
       _passwordController.text;
@@ -109,6 +111,9 @@ class _LoginPageState extends State<LoginPage> {
         await prefs.setString('idUser', idUser.toString());
         await prefs.setString('token', token.toString());
         await prefs.setString('roles', roles.toString());
+        setState(() {
+          proses = false;
+        });
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -116,6 +121,9 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
       } else {
+        setState(() {
+          proses = false;
+        });
         final snackBar = SnackBar(
           content: Text(response.data['message'].toString()),
         );
@@ -124,11 +132,16 @@ class _LoginPageState extends State<LoginPage> {
       }
     } on DioError catch (e) {
       print(e);
+      final snackBar = SnackBar(
+        content: Text(e.toString().toString()),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
       // _showAlertDialog(context, 'Wrong Username / Password');
     }
   }
 
-  bool show = false;
+  bool show = true;
   void showPassword() {
     setState(() {
       if (show) {
@@ -151,7 +164,7 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: 64,
+                    height: 40,
                   ),
                   Image.asset("assets/splash.png"),
                   Text(
@@ -276,10 +289,17 @@ class _LoginPageState extends State<LoginPage> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               primary: primaryButtonColor),
-                          onPressed: () async {
-                            await _cekLogin();
-                          },
-                          child: Text('LOGIN'),
+                          onPressed: proses
+                              ? null
+                              : () async {
+                                  await _cekLogin();
+                                },
+                          child: proses
+                              ? CircularProgressIndicator(
+                                  valueColor: new AlwaysStoppedAnimation<Color>(
+                                      primaryButtonColor),
+                                )
+                              : Text('LOGIN'),
                         ),
                       ),
                       //                 RoundedLoadingButton(

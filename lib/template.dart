@@ -10,5 +10,6 @@ Color tncButtonColor = Color(0xff130160);
 Color greyColor = Colors.grey;
 Color deleteColor = Colors.red;
 Color backgroundPrimary = Color(0xfff4ece8);
+Color themeColor = Color(0xFFE3D3CA);
 
 FontWeight bold = FontWeight.bold;

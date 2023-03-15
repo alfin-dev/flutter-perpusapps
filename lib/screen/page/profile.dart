@@ -17,7 +17,9 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   // late Future<List> _listUser;
   List member = [];
+  // ignore: non_constant_identifier_names
   String cek_prev = 'null';
+  // ignore: non_constant_identifier_names
   String cek_next = 'null';
   int page = 1;
 
@@ -74,14 +76,14 @@ class _ProfileState extends State<Profile> {
         title: Text(
           'List Member',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: <Widget>[
-          Icon(Icons.person_add),
-          SizedBox(width: 15),
-        ],
+        // actions: <Widget>[
+        //   Icon(Icons.person_add),
+        //   SizedBox(width: 15),
+        // ],
       ),
       body: member.length == 0
           ? Center(child: CircularProgressIndicator())

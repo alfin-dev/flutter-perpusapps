@@ -202,8 +202,8 @@ class _pinjamBukuState extends State<pinjamBuku> {
                   // inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                   controller: _textDateEndController,
                   decoration: InputDecoration(
-                    hintText: "Masukkan Tanggal Peminjaman Buku Anda",
-                    labelText: "Tanggal Peminjaman",
+                    hintText: "Masukkan Tanggal Pengembalian Buku Anda",
+                    labelText: "Tanggal Pengembalian",
                     suffixIcon: IconButton(
                       icon: Icon(Icons.date_range),
                       onPressed: () {

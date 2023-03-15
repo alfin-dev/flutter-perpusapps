@@ -56,6 +56,12 @@ class _DetailBukuState extends State<DetailBuku> {
       if (response.data['status'] == 200) {
         // print('sukses');
         Navigator.pop(context);
+      } else {
+        final snackBar = SnackBar(
+          content: Text(response.data['message']['message'].toString()),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     } catch (e) {
       print(e);
@@ -150,10 +156,18 @@ class _DetailBukuState extends State<DetailBuku> {
             height: 10,
           ),
           Container(
+            child: Text(
+              'Sisa Stok : ' + widget.dataBuku['stok'].toString(),
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Container(
             margin: EdgeInsets.all(5),
             child: Text(
               sinopsis,
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(
+                fontSize: 16,
+              ),
             ),
           ),
           Expanded(
@@ -165,14 +179,17 @@ class _DetailBukuState extends State<DetailBuku> {
                   child: ElevatedButton(
                     style:
                         ElevatedButton.styleFrom(primary: primaryButtonColor),
-                    onPressed: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => pinjamBuku(widget.dataBuku),
-                        ),
-                      );
-                    },
+                    onPressed: widget.dataBuku['stok'] < 1
+                        ? null
+                        : () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    pinjamBuku(widget.dataBuku),
+                              ),
+                            );
+                          },
                     child: Text('Pinjam Buku'),
                   ),
                 ),

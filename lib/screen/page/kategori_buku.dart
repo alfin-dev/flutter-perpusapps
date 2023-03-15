@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:banner_listtile/banner_listtile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:perpus_app/mastervariable.dart';
@@ -107,7 +108,7 @@ class _KategoriBukuState extends State<KategoriBuku> {
         title: Text(
           'Kategori Buku',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -162,29 +163,46 @@ class _KategoriBukuState extends State<KategoriBuku> {
             ],
           ),
           _listKategori.length == 0
-              ? Center(child: CircularProgressIndicator())
+              ? Center(
+                  child: CircularProgressIndicator(
+                  valueColor:
+                      new AlwaysStoppedAnimation<Color>(primaryButtonColor),
+                ))
               : Expanded(
                   child: ListView.builder(
                     itemCount: _listKategori.length,
                     itemBuilder: (BuildContext context, int index) {
                       // print(snapshot.data![index]);
-                      return ListTile(
-                        title: Text(
-                          _listKategori[index]['nama_kategori'],
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        onTap: () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TambahKategori(
-                                mode: FormMode.edit,
-                                detail: _listKategori[index],
+                      return Container(
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        child: Column(
+                          children: [
+                            BannerListTile(
+                              bannerText: '',
+                              bannerColor: Color(0xFFE7E7E7),
+                              backgroundColor: Color(0xFFE7E7E7),
+                              title: Text(
+                                _listKategori[index]['nama_kategori'],
+                                overflow: TextOverflow.ellipsis,
+                                style:
+                                    TextStyle(fontWeight: bold, fontSize: 16),
                               ),
+                              onTap: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => TambahKategori(
+                                      mode: FormMode.edit,
+                                      detail: _listKategori[index],
+                                    ),
+                                  ),
+                                );
+                                refresh();
+                              },
                             ),
-                          );
-                          refresh();
-                        },
+                            SizedBox(height: 5),
+                          ],
+                        ),
                       );
                     },
                   ),

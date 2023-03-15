@@ -82,186 +82,246 @@ class _registerPageState extends State<registerPage> {
     return;
   }
 
+  bool showpass = false;
+  void showPassword() {
+    setState(() {
+      if (showpass) {
+        showpass = false;
+      } else {
+        showpass = true;
+      }
+    });
+  }
+
+  bool showretypepass = false;
+  void showRetypePassword() {
+    setState(() {
+      if (showretypepass) {
+        showretypepass = false;
+      } else {
+        showretypepass = true;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: backgroundPrimary,
         body: Center(
-      child: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Register PerpusApps',
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500),
-              ),
-              SizedBox(height: 11),
-              Text(
-                'silahkan melakukan pendaftaran untuk dapat mengakses perpusApps sekolah abcd.ac.id',
-                style: TextStyle(fontSize: 14),
-              ),
-              SizedBox(
-                height: 60,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
+          child: SingleChildScrollView(
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 32),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Image.asset("assets/splash.png"),
                   Text(
-                    'Name',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                    'Register Perpus Apps',
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500),
                   ),
-                  SizedBox(height: 10),
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Color(0xFFFFFFFF3),
-                    ),
-                    child: TextField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Masukkan Nama Anda',
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 15),
+                  SizedBox(height: 11),
                   Text(
-                    'Username',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                    'silahkan melakukan pendaftaran untuk dapat mengakses perpusApps sekolah abcd.ac.id',
+                    style: TextStyle(fontSize: 14),
                   ),
-                  SizedBox(height: 10),
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Color(0xFFFFFFFF3),
-                    ),
-                    child: TextField(
-                      controller: _userNameController,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Masukkan Username Anda',
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-                      ),
-                    ),
+                  SizedBox(
+                    height: 60,
                   ),
-                  SizedBox(height: 15),
-                  Text(
-                    'Email',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Color(0xFFFFFFFF3),
-                    ),
-                    child: TextField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Masukkan Email Anda',
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 15),
-                  Text(
-                    'Password',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Color(0xFFFFFFFF3),
-                    ),
-                    child: TextField(
-                      controller: _passwordController,
-                      obscureText: true,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 17),
-                          suffixIcon: Icon(Icons.visibility_off)),
-                    ),
-                  ),
-                  SizedBox(height: 15),
-                  Text(
-                    'Re-type Password',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Color(0xFFFFFFFF3),
-                    ),
-                    child: TextField(
-                      controller: _retypePasswordController,
-                      obscureText: true,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 17),
-                          suffixIcon: Icon(Icons.visibility_off)),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginPage(),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          'Have account ?',
-                          style:
-                              TextStyle(fontSize: 14, color: Colors.lightBlue),
+                      Text(
+                        'Name',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(height: 10),
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Color(0xFFFFFFFF3),
                         ),
-                      )
+                        child: TextField(
+                          controller: _nameController,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Masukkan Nama Anda',
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 17),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        'Username',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(height: 10),
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Color(0xFFFFFFFF3),
+                        ),
+                        child: TextField(
+                          controller: _userNameController,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Masukkan Username Anda',
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 17),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        'Email',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(height: 10),
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Color(0xFFFFFFFF3),
+                        ),
+                        child: TextField(
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Masukkan Email Anda',
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 17),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        'Password',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(height: 10),
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Color(0xFFFFFFFF3),
+                        ),
+                        child: TextField(
+                          controller: _passwordController,
+                          obscureText: showpass ? false : true,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 17),
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                showPassword();
+                              },
+                              icon: showpass
+                                  ? Icon(
+                                      Icons.visibility,
+                                      color: primaryButtonColor,
+                                    )
+                                  : Icon(
+                                      Icons.visibility_off,
+                                      color: primaryButtonColor,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        'Re-type Password',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(height: 10),
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Color(0xFFFFFFFF3),
+                        ),
+                        child: TextField(
+                          controller: _retypePasswordController,
+                          obscureText: showretypepass ? false : true,
+                          enableSuggestions: false,
+                          autocorrect: false,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 17),
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                showRetypePassword();
+                              },
+                              icon: showretypepass
+                                  ? Icon(
+                                      Icons.visibility,
+                                      color: primaryButtonColor,
+                                    )
+                                  : Icon(
+                                      Icons.visibility_off,
+                                      color: primaryButtonColor,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginPage(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Have account ?',
+                              style: TextStyle(
+                                  fontSize: 14, color: primaryButtonColor),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Container(
+                        width: double.infinity,
+                        height: 50,
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              primary: primaryButtonColor),
+                          onPressed: () async {
+                            await _cekLogin();
+                          },
+                          child: Text('Register'),
+                        ),
+                      ),
+                      SizedBox(height: 20),
                     ],
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                    width: double.infinity,
-                    height: 50,
-                    margin: EdgeInsets.symmetric(horizontal: 20),
-                    child: ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(primary: primaryButtonColor),
-                      onPressed: () async {
-                        await _cekLogin();
-                      },
-                      child: Text('LOGIN'),
-                    ),
-                  ),
+                  )
                 ],
-              )
-            ],
+              ),
+            ),
           ),
-        ),
-      ),
-    ));
+        ));
   }
 }

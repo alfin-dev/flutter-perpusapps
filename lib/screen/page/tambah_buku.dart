@@ -283,7 +283,10 @@ class _TambahBukuState extends State<TambahBuku> {
                         },
                       );
                     } else {
-                      return const CircularProgressIndicator();
+                      return CircularProgressIndicator(
+                        valueColor: new AlwaysStoppedAnimation<Color>(
+                            primaryButtonColor),
+                      );
                     }
                   }),
               SizedBox(height: 10),

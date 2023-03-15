@@ -34,12 +34,14 @@ class _Dashboard extends State<Dashboard> {
           ListBuku(),
           KategoriBuku(),
           Home(),
+          listPeminjaman(),
           Profile(),
           detailProfile(),
         ];
       });
     } else {
       setState(() {
+        _selectedNavbar = 1;
         _children = [
           ListBuku(),
           Home(),
@@ -92,10 +94,6 @@ class _Dashboard extends State<Dashboard> {
                       icon: Icon(Icons.book),
                       title: Text('List Buku'),
                     ),
-                    // BottomNavigationBarItem(
-                    //   icon: Icon(Icons.catching_pokemon),
-                    //   title: Text('Kategori Buku'),
-                    // ),
                     BottomNavigationBarItem(
                       icon: Icon(Icons.home),
                       title: Text('Home'),
@@ -138,6 +136,10 @@ class _Dashboard extends State<Dashboard> {
                     BottomNavigationBarItem(
                       icon: Icon(Icons.home),
                       title: Text('Home'),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.bookmark_added_rounded),
+                      title: Text('List Peminjaman'),
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(Icons.person_add),

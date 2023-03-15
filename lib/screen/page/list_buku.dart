@@ -285,7 +285,7 @@ class _ListBukuState extends State<ListBuku> {
         title: Text(
           'List Buku',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -401,7 +401,12 @@ class _ListBukuState extends State<ListBuku> {
           ),
           SizedBox(height: 5),
           (firstLoad)
-              ? Center(child: CircularProgressIndicator())
+              ? Center(
+                  child: CircularProgressIndicator(
+                    valueColor:
+                        new AlwaysStoppedAnimation<Color>(primaryButtonColor),
+                  ),
+                )
               : Expanded(
                   child: LazyLoadScrollView(
                     onEndOfPage: () async {
@@ -471,11 +476,21 @@ class _ListBukuState extends State<ListBuku> {
                 ),
           progress == true
               ? Visibility(
-                  child: Center(child: CircularProgressIndicator()),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          new AlwaysStoppedAnimation<Color>(primaryButtonColor),
+                    ),
+                  ),
                   visible: true,
                 )
               : Visibility(
-                  child: Center(child: CircularProgressIndicator()),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          new AlwaysStoppedAnimation<Color>(primaryButtonColor),
+                    ),
+                  ),
                   visible: false,
                 )
         ],

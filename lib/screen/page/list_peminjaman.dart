@@ -127,7 +127,7 @@ class _listPeminjamanState extends State<listPeminjaman> {
         title: Text(
           'List Peminjaman Buku',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),

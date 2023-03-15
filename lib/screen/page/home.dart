@@ -39,6 +39,7 @@ class _HomeState extends State<Home> {
           },
         ),
       );
+      log(response.data.toString());
       if (response.data['status'] == 200) {
         log(response.data['data']['dashboard'].toString());
         log((_totalBuku.text == '').toString());
@@ -66,6 +67,7 @@ class _HomeState extends State<Home> {
   }
 
   void initState() {
+    init();
     super.initState();
     _totalBuku.text = '';
     _totalStok.text = '';
@@ -74,6 +76,19 @@ class _HomeState extends State<Home> {
     _totalDipinjam.text = '';
     _totalDikembalikan.text = '';
     getDashboard();
+  }
+
+  String? _roles;
+
+  Future init() async {
+    await getRoles();
+  }
+
+  getRoles() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _roles = prefs.getString('roles').toString();
+    });
   }
 
   @override
@@ -92,7 +107,7 @@ class _HomeState extends State<Home> {
             Text(
               'Dashboard',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -136,7 +151,7 @@ class _HomeState extends State<Home> {
                       borderRadius: BorderRadius.all(
                         Radius.circular(10),
                       ),
-                      color: const Color(0xFFFFEFD5),
+                      color: Colors.red[100],
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.7),
@@ -184,7 +199,7 @@ class _HomeState extends State<Home> {
                       borderRadius: BorderRadius.all(
                         Radius.circular(10),
                       ),
-                      color: const Color(0xFFFFE7C0),
+                      color: Colors.red[200],
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.7),
@@ -225,126 +240,130 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-            Row(
-              children: [
-                Container(
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-                  child: Row(
-                    children: [
-                      Icon(FontAwesomeIcons.personCircleCheck),
-                      SizedBox(width: 7),
-                      Text(
-                        'Users',
-                        style: TextStyle(fontSize: 30, fontWeight: bold),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              height: 190,
-              child: GridView.count(
-                physics: NeverScrollableScrollPhysics(),
-                primary: false,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-                crossAxisSpacing: 38,
-                mainAxisSpacing: 40,
-                crossAxisCount: 2,
-                children: <Widget>[
+            if (_roles != 'member')
+              Row(
+                children: [
                   Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                      color: Colors.red[100],
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.7),
-                          spreadRadius: 5,
-                          blurRadius: 6,
-                          offset: Offset(3, 6), // changes position of shadow
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.all(8),
-                    child: Column(
+                    alignment: Alignment.centerLeft,
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                    child: Row(
                       children: [
-                        Row(
-                          children: [
-                            Icon(Icons.credit_card),
-                            Text(
-                              "Member",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Center(
-                          child: (_totalMember.text == '')
-                              ? CircularProgressIndicator(
-                                  valueColor: new AlwaysStoppedAnimation<Color>(
-                                      primaryButtonColor),
-                                )
-                              : Text(
-                                  _totalMember.text,
-                                  style: TextStyle(fontSize: 50),
-                                ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                      color: Colors.red[200],
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.7),
-                          spreadRadius: 5,
-                          blurRadius: 6,
-                          offset: Offset(3, 6), // changes position of shadow
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.all(8),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.people_outline_outlined),
-                            Text(
-                              "Pegawai",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 30),
-                        Center(
-                          child: (_totalPegawai.text == '')
-                              ? CircularProgressIndicator(
-                                  valueColor: new AlwaysStoppedAnimation<Color>(
-                                      primaryButtonColor),
-                                )
-                              : Text(
-                                  _totalPegawai.text,
-                                  style: TextStyle(fontSize: 50),
-                                ),
+                        Icon(FontAwesomeIcons.personCircleCheck),
+                        SizedBox(width: 7),
+                        Text(
+                          'Users',
+                          style: TextStyle(fontSize: 30, fontWeight: bold),
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
-            ),
+            if (_roles != 'member')
+              Container(
+                height: 190,
+                child: GridView.count(
+                  physics: NeverScrollableScrollPhysics(),
+                  primary: false,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                  crossAxisSpacing: 38,
+                  mainAxisSpacing: 40,
+                  crossAxisCount: 2,
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                        color: Color(0xFFFFEFD5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.7),
+                            spreadRadius: 5,
+                            blurRadius: 6,
+                            offset: Offset(3, 6), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.credit_card),
+                              Text(
+                                "Member",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Center(
+                            child: (_totalMember.text == '')
+                                ? CircularProgressIndicator(
+                                    valueColor:
+                                        new AlwaysStoppedAnimation<Color>(
+                                            primaryButtonColor),
+                                  )
+                                : Text(
+                                    _totalMember.text,
+                                    style: TextStyle(fontSize: 50),
+                                  ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                        color: Color(0xFFFFE7C0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.7),
+                            spreadRadius: 5,
+                            blurRadius: 6,
+                            offset: Offset(3, 6), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.people_outline_outlined),
+                              Text(
+                                "Pegawai",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 30),
+                          Center(
+                            child: (_totalPegawai.text == '')
+                                ? CircularProgressIndicator(
+                                    valueColor:
+                                        new AlwaysStoppedAnimation<Color>(
+                                            primaryButtonColor),
+                                  )
+                                : Text(
+                                    _totalPegawai.text,
+                                    style: TextStyle(fontSize: 50),
+                                  ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             Row(
               children: [
                 Container(
@@ -379,7 +398,7 @@ class _HomeState extends State<Home> {
                       borderRadius: BorderRadius.all(
                         Radius.circular(10),
                       ),
-                      color: Colors.red[100],
+                      color: Colors.purple[50],
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.7),
@@ -424,7 +443,7 @@ class _HomeState extends State<Home> {
                       borderRadius: BorderRadius.all(
                         Radius.circular(10),
                       ),
-                      color: Colors.red[200],
+                      color: Colors.purple[100],
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.7),
