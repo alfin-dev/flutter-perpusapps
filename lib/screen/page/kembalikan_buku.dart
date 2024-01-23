@@ -19,7 +19,6 @@ class kembalikanBuku extends StatefulWidget {
 
 class _kembalikanBukuState extends State<kembalikanBuku> {
   DateTime _selectedDate = DateTime.now();
-  DateTime _selectedDateBack = DateTime.now();
   TextEditingController _textDateController = TextEditingController();
 
   @override
@@ -72,7 +71,7 @@ class _kembalikanBukuState extends State<kembalikanBuku> {
   _selectDate(BuildContext context) async {
     final DateTime? newSelectedDate = await showDatePicker(
       context: context,
-      initialDate: _selectedDate != null ? _selectedDate : DateTime.now(),
+      initialDate: DateTime.now(),
       firstDate: _selectedDate,
       lastDate: _selectedDate,
     );
@@ -108,8 +107,7 @@ class _kembalikanBukuState extends State<kembalikanBuku> {
           ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: Image.network(
-              url + 'storage/' +
-                  widget.dataBuku['book']['path'],
+              url + 'storage/' + widget.dataBuku['book']['path'],
               width: 200,
               height: 250,
             ),

@@ -1,8 +1,8 @@
-import 'dart:developer';
-
-import 'package:checkbox_formfield/checkbox_formfield.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:drift/drift.dart' as drift;
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:perpus_app/database/database.dart';
 import 'package:perpus_app/mastervariable.dart';
 import 'package:perpus_app/template.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,42 +19,52 @@ class TambahKategori extends StatefulWidget {
 }
 
 class _TambahKategoriState extends State<TambahKategori> {
+  final database = AppDatabase();
   final TextEditingController _kategoriController = TextEditingController();
   final TextEditingController _idKategoriController = TextEditingController();
   late String? nama_kategori;
 
   _insertKategori() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
     String? _token;
     _token = prefs.getString('token').toString();
-    setState(() {
-      _kategoriController.text;
-    });
-
-    if (widget.mode == FormMode.create) {
-      var params = "category/create";
-      var dio = Dio();
-      var formData = FormData.fromMap({
-        'nama_kategori': _kategoriController.text,
+    if (isConnected == true) {
+      setState(() {
+        _kategoriController.text;
       });
-      try {
-        var response = await dio.post(
-          sUrl + params,
-          data: formData,
-          options: Options(
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": "Bearer ${_token}",
-            },
-          ),
-        );
-        if (response.data['status'] == 201) {
-          Navigator.pop(context);
+
+      if (widget.mode == FormMode.create) {
+        var params = "category/create";
+        var dio = Dio();
+        var formData = FormData.fromMap({
+          'nama_kategori': _kategoriController.text,
+        });
+        try {
+          var response = await dio.post(
+            sUrl + params,
+            data: formData,
+            options: Options(
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${_token}",
+              },
+            ),
+          );
+          if (response.data['status'] == 201) {
+            Navigator.pop(context);
+          }
+          print(response.data['status']);
+        } catch (e) {
+          print(e);
         }
-        print(response.data['status']);
-      } catch (e) {
-        print(e);
       }
+    } else {
+      await database.into(database.categories).insert(
+          CategoriesCompanion.insert(
+              nama_kategori: _kategoriController.text,
+              is_sync: drift.Value.ofNullable(false)));
+      Navigator.pop(context);
     }
 
     if (widget.mode == FormMode.edit) {

@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:perpus_app/main.dart';
 import 'package:perpus_app/template.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:perpus_app/mastervariable.dart';
 
 class registerPage extends StatefulWidget {
@@ -21,7 +20,6 @@ class _registerPageState extends State<registerPage> {
       TextEditingController();
   bool visible = false;
   Login? login;
-  String? _token;
 
   @override
   void initState() {
@@ -51,8 +49,6 @@ class _registerPageState extends State<registerPage> {
         'password': _passwordController.text,
         'confirm_password': _retypePasswordController.text,
       });
-
-      final prefs = await SharedPreferences.getInstance();
 
       if (response.data['status'] == 200) {
         _submit(context);

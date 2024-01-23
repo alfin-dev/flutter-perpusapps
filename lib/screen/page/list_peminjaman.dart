@@ -5,9 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:perpus_app/mastervariable.dart';
-import 'package:perpus_app/screen/page/detail_buku.dart';
 import 'package:perpus_app/screen/page/detail_peminjaman.dart';
-import 'package:perpus_app/screen/page/tambah_buku.dart';
 import 'package:perpus_app/template.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

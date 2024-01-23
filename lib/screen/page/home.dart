@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:perpus_app/mastervariable.dart';
@@ -39,10 +36,7 @@ class _HomeState extends State<Home> {
           },
         ),
       );
-      log(response.data.toString());
       if (response.data['status'] == 200) {
-        log(response.data['data']['dashboard'].toString());
-        log((_totalBuku.text == '').toString());
         setState(() {
           _totalBuku.text =
               response.data['data']['dashboard']['totalBuku'].toString();

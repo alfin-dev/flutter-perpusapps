@@ -20,7 +20,6 @@ class ListBuku extends StatefulWidget {
 }
 
 class _ListBukuState extends State<ListBuku> {
-  late Future<List> _listBuku;
   String? _roles;
   bool _visible = false;
   List listbaru = [];

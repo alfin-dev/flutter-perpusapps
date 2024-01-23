@@ -98,7 +98,6 @@ class _DetailBukuState extends State<DetailBuku> {
 
   @override
   Widget build(BuildContext context) {
-    double _screen = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: Text(

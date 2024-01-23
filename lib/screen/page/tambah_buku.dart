@@ -1,17 +1,12 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:async';
-import 'package:checkbox_formfield/checkbox_formfield.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:perpus_app/mastervariable.dart';
-import 'package:perpus_app/screen/page/list_buku.dart';
 import 'package:perpus_app/template.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_material_pickers/flutter_material_pickers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum FormMode { create, edit }
@@ -157,7 +152,9 @@ class _TambahBukuState extends State<TambahBuku> {
         );
         log(response.toString());
         if (response.data['status'] == 200) {
-          Navigator.of(context)..pop()..pop();
+          Navigator.of(context)
+            ..pop()
+            ..pop();
         }
         print(response.data['status']);
       } catch (e) {
@@ -291,7 +288,7 @@ class _TambahBukuState extends State<TambahBuku> {
                   }),
               SizedBox(height: 10),
               TextFormField(
-                inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                // inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                 controller: _tahunTerbitController,
                 decoration: InputDecoration(
                   hintText: "Masukkan Tahun Terbit Buku Anda",
@@ -305,7 +302,7 @@ class _TambahBukuState extends State<TambahBuku> {
               SizedBox(height: 10),
               TextFormField(
                 controller: _stokController,
-                inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                // inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                 decoration: InputDecoration(
                   hintText: "Masukkan Stok Buku Anda",
                   labelText: "Stok",

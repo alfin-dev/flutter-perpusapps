@@ -13,7 +13,6 @@ class detailProfile extends StatefulWidget {
 }
 
 class _detailProfileState extends State<detailProfile> {
-  Map? _detailprofile;
   String? _name = 'Name';
   String? _email = 'mail@example.com';
 

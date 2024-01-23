@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:perpus_app/mastervariable.dart';
 import 'package:perpus_app/screen/page/kembalikan_buku.dart';
-import 'package:perpus_app/screen/page/pinjam_buku.dart';
 import 'package:perpus_app/screen/page/tambah_buku.dart';
 import 'package:perpus_app/template.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -52,7 +51,6 @@ class _detailPeminjamanState extends State<detailPeminjaman> {
       );
       print(response.data);
       if (response.data['status'] == 200) {
-        // print('sukses');
         Navigator.pop(context);
       }
     } catch (e) {
@@ -90,7 +88,6 @@ class _detailPeminjamanState extends State<detailPeminjaman> {
 
   @override
   Widget build(BuildContext context) {
-    double _screen = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: Text(

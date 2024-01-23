@@ -1,8 +1,12 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:banner_listtile/banner_listtile.dart';
 import 'package:dio/dio.dart';
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:perpus_app/database/database.dart';
 import 'package:perpus_app/mastervariable.dart';
 import 'package:perpus_app/screen/page/tambah_kategori.dart';
 import 'package:perpus_app/template.dart';
@@ -16,7 +20,9 @@ class KategoriBuku extends StatefulWidget {
 }
 
 class _KategoriBukuState extends State<KategoriBuku> {
+  final database = AppDatabase();
   List _listKategori = [];
+  var dataLocal;
   String? _roles;
   bool _visible = false;
   int page = 1;
@@ -25,45 +31,84 @@ class _KategoriBukuState extends State<KategoriBuku> {
   TextEditingController _searchController = TextEditingController();
   String _search = '';
 
+  Future<List<Category>> getAll() {
+    return database.select(database.categories).get();
+  }
+
+  Future<List<Category>> getAllUnsynced() {
+    return (database.select(database.categories)
+          ..where((t) => t.is_sync.not() | t.is_sync.isNull()))
+        .get();
+  }
+
+  test() async {
+    dataLocal = await getAllUnsynced();
+    var jsonData = jsonEncode(dataLocal.map((e) => e.toJson()).toList());
+    log(jsonData.toString());
+  }
+
+  insert(var data) async {
+    var exist = await (database.select(database.categories)
+          ..where((t) => t.nama_kategori.equals(data['nama_kategori'])))
+        .get();
+    var jsonData = jsonEncode(exist.map((e) => e.toJson()).toList());
+    log(jsonData.toString());
+    if (jsonData == '[]') {
+      log('disini');
+      await database.into(database.categories).insert(
+          CategoriesCompanion.insert(
+              nama_kategori: data['nama_kategori'],
+              is_sync: drift.Value.ofNullable(true)));
+    }
+  }
+
   Future getKategori() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
     setState(() {
       _listKategori = [];
     });
-    try {
-      var params = "category/all";
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? _token;
-      _token = prefs.getString('token').toString();
-      var dio = Dio();
-      var queryParams = <String, dynamic>{
-        "page": page,
-        "search": _search,
-      };
-      var response = await dio.get(
-        sUrl + params,
-        queryParameters: queryParams,
-        options: Options(
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer ${_token}",
-          },
-        ),
-      );
+    if (isConnected == true) {
+      try {
+        var params = "category/all";
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? _token;
+        _token = prefs.getString('token').toString();
+        var dio = Dio();
+        var queryParams = <String, dynamic>{
+          "page": page,
+          "search": _search,
+        };
+        var response = await dio.get(
+          sUrl + params,
+          queryParameters: queryParams,
+          options: Options(
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer ${_token}",
+            },
+          ),
+        );
 
-      // log(response.data.toString());
-      if (response.data['status'] == 200) {
-        setState(() {
-          cek_prev =
-              response.data['data']['categories']['prev_page_url'].toString();
-          cek_next =
-              response.data['data']['categories']['next_page_url'].toString();
-          _listKategori = response.data['data']['categories']['data'];
-        });
-      } else {
-        print('Error');
+        if (response.data['status'] == 200) {
+          setState(() {
+            cek_prev =
+                response.data['data']['categories']['prev_page_url'].toString();
+            cek_next =
+                response.data['data']['categories']['next_page_url'].toString();
+            _listKategori = response.data['data']['categories']['data'];
+          });
+        } else {
+          print('Error');
+        }
+      } catch (e) {
+        print(e);
       }
-    } catch (e) {
-      print(e);
+    } else {
+      dataLocal = await getAll();
+      var jsonData = jsonEncode(dataLocal.map((e) => e.toJson()).toList());
+      setState(() {
+        _listKategori = json.decode(jsonData);
+      });
     }
     return [];
   }
@@ -76,8 +121,84 @@ class _KategoriBukuState extends State<KategoriBuku> {
     });
   }
 
+  syncData() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? _token;
+    _token = prefs.getString('token').toString();
+    if (isConnected == true) {
+      try {
+        var params = "category/all/all";
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? _token;
+        _token = prefs.getString('token').toString();
+        var dio = Dio();
+        var queryParams = <String, dynamic>{
+          "page": page,
+          "search": _search,
+        };
+        var response = await dio.get(
+          sUrl + params,
+          queryParameters: queryParams,
+          options: Options(
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer ${_token}",
+            },
+          ),
+        );
+
+        if (response.data['status'] == 200) {
+          Iterable responseData = response.data['data']['categories'];
+          for (var data in responseData) {
+            log(data.toString());
+            insert(data);
+          }
+        } else {
+          print('Error');
+        }
+      } catch (e) {
+        print(e);
+      }
+      dataLocal = await getAllUnsynced();
+      var jsonData = jsonEncode(dataLocal.map((e) => e.toJson()).toList());
+      Iterable jsonDedoced = json.decode(jsonData);
+      for (var data in jsonDedoced) {
+        var params = "category/create";
+        var dio = Dio();
+        var formData = FormData.fromMap({
+          'nama_kategori': data['nama_kategori'],
+        });
+        try {
+          var response = await dio.post(
+            sUrl + params,
+            data: formData,
+            options: Options(
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${_token}",
+              },
+            ),
+          );
+          print(response.data['status']);
+          moveImportantTasksIntoCategory(data);
+        } catch (e) {
+          print(e);
+        }
+      }
+    }
+  }
+
+  Future moveImportantTasksIntoCategory(var data) async {
+    return await database.update(database.categories).replace(Category(
+        id: data['id'], nama_kategori: data['nama_kategori'], is_sync: true));
+  }
+
   @override
   void initState() {
+    // insert();
+    // test();
+    syncData();
     getKategori();
     getRoles();
     super.initState();
@@ -145,7 +266,7 @@ class _KategoriBukuState extends State<KategoriBuku> {
               ),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  primary: primaryButtonColor,
+                  backgroundColor: primaryButtonColor,
                   minimumSize: const Size(60, 55),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5.0),
@@ -172,7 +293,6 @@ class _KategoriBukuState extends State<KategoriBuku> {
                   child: ListView.builder(
                     itemCount: _listKategori.length,
                     itemBuilder: (BuildContext context, int index) {
-                      // print(snapshot.data![index]);
                       return Container(
                         padding: EdgeInsets.symmetric(horizontal: 5),
                         child: Column(
@@ -218,8 +338,8 @@ class _KategoriBukuState extends State<KategoriBuku> {
                 Row(
                   children: [
                     ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryButtonColor),
                       onPressed: () {
                         page--;
                         getKategori();
@@ -228,8 +348,8 @@ class _KategoriBukuState extends State<KategoriBuku> {
                     ),
                     SizedBox(width: 10),
                     ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryButtonColor),
                       onPressed: () {
                         page++;
                         getKategori();
@@ -246,15 +366,15 @@ class _KategoriBukuState extends State<KategoriBuku> {
                 Row(
                   children: [
                     ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryButtonColor),
                       onPressed: null,
                       child: Text('Prev'),
                     ),
                     SizedBox(width: 10),
                     ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryButtonColor),
                       onPressed: () {
                         page++;
                         getKategori();
@@ -268,8 +388,8 @@ class _KategoriBukuState extends State<KategoriBuku> {
                 Row(
                   children: [
                     ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryButtonColor),
                       onPressed: () {
                         page--;
                         getKategori();
@@ -278,8 +398,8 @@ class _KategoriBukuState extends State<KategoriBuku> {
                     ),
                     SizedBox(width: 10),
                     ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryButtonColor),
                       onPressed: null,
                       child: Text('Next'),
                     ),
@@ -290,15 +410,15 @@ class _KategoriBukuState extends State<KategoriBuku> {
                 Row(
                   children: [
                     ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryButtonColor),
                       onPressed: null,
                       child: Text('Prev'),
                     ),
                     SizedBox(width: 10),
                     ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryButtonColor),
                       onPressed: null,
                       child: Text('Next'),
                     ),
