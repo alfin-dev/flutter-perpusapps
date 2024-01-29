@@ -354,7 +354,7 @@ class _ListBukuState extends State<ListBuku> {
               ),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  primary: primaryButtonColor,
+                  foregroundColor: primaryButtonColor,
                   minimumSize: const Size(50, 55),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5.0),
@@ -385,7 +385,7 @@ class _ListBukuState extends State<ListBuku> {
                       alignment: Alignment.bottomCenter,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            primary: primaryButtonColor),
+                            foregroundColor: primaryButtonColor),
                         onPressed: () {
                           getBukuFiltered(listkategori[index]['id'].toString());
                         },

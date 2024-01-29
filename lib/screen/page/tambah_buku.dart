@@ -172,7 +172,8 @@ class _TambahBukuState extends State<TambahBuku> {
           title: Text('Pilih cover buku'),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           content: ElevatedButton(
-            style: ElevatedButton.styleFrom(primary: primaryButtonColor),
+            style:
+                ElevatedButton.styleFrom(foregroundColor: primaryButtonColor),
             //if user click this button, user can upload image from gallery
             onPressed: () {
               Navigator.pop(context);
@@ -335,7 +336,8 @@ class _TambahBukuState extends State<TambahBuku> {
                 height: 40,
                 margin: EdgeInsets.symmetric(horizontal: 50),
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: primaryButtonColor),
+                  style: ElevatedButton.styleFrom(
+                      foregroundColor: primaryButtonColor),
                   onPressed: () {
                     myAlert();
                   },
@@ -397,7 +399,8 @@ class _TambahBukuState extends State<TambahBuku> {
               Container(
                 alignment: Alignment.bottomCenter,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: primaryButtonColor),
+                  style: ElevatedButton.styleFrom(
+                      foregroundColor: primaryButtonColor),
                   onPressed: loading
                       ? null
                       : () async {

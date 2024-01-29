@@ -176,8 +176,8 @@ class _DetailBukuState extends State<DetailBuku> {
                 Container(
                   alignment: Alignment.bottomCenter,
                   child: ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(primary: primaryButtonColor),
+                    style: ElevatedButton.styleFrom(
+                        foregroundColor: primaryButtonColor),
                     onPressed: widget.dataBuku['stok'] < 1
                         ? null
                         : () async {
@@ -196,7 +196,8 @@ class _DetailBukuState extends State<DetailBuku> {
                   Container(
                     alignment: Alignment.bottomCenter,
                     child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: deleteColor),
+                      style: ElevatedButton.styleFrom(
+                          foregroundColor: deleteColor),
                       onPressed: () async {
                         await _showDelete();
                       },

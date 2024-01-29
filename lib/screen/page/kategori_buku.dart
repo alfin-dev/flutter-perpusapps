@@ -54,7 +54,6 @@ class _KategoriBukuState extends State<KategoriBuku> {
     var jsonData = jsonEncode(exist.map((e) => e.toJson()).toList());
     log(jsonData.toString());
     if (jsonData == '[]') {
-      log('disini');
       await database.into(database.categories).insert(
           CategoriesCompanion.insert(
               nama_kategori: data['nama_kategori'],
@@ -266,7 +265,7 @@ class _KategoriBukuState extends State<KategoriBuku> {
               ),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryButtonColor,
+                  foregroundColor: primaryButtonColor,
                   minimumSize: const Size(60, 55),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5.0),

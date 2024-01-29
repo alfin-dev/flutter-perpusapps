@@ -120,7 +120,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: primaryButtonColor),
+                                foregroundColor: primaryButtonColor),
                             onPressed: () {
                               page--;
                               getUsers();
@@ -130,7 +130,7 @@ class _ProfileState extends State<Profile> {
                           SizedBox(width: 10),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: primaryButtonColor),
+                                foregroundColor: primaryButtonColor),
                             onPressed: () {
                               page++;
                               getUsers();
@@ -145,14 +145,14 @@ class _ProfileState extends State<Profile> {
                         children: [
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: primaryButtonColor),
+                                foregroundColor: primaryButtonColor),
                             onPressed: null,
                             child: Text('Prev'),
                           ),
                           SizedBox(width: 10),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: primaryButtonColor),
+                                foregroundColor: primaryButtonColor),
                             onPressed: () {
                               page++;
                               getUsers();
@@ -167,7 +167,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: primaryButtonColor),
+                                foregroundColor: primaryButtonColor),
                             onPressed: () {
                               page--;
                               getUsers();
@@ -177,7 +177,7 @@ class _ProfileState extends State<Profile> {
                           SizedBox(width: 10),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: primaryButtonColor),
+                                foregroundColor: primaryButtonColor),
                             onPressed: null,
                             child: Text('Next'),
                           ),
@@ -189,14 +189,14 @@ class _ProfileState extends State<Profile> {
                         children: [
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: primaryButtonColor),
+                                foregroundColor: primaryButtonColor),
                             onPressed: null,
                             child: Text('Prev'),
                           ),
                           SizedBox(width: 10),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: primaryButtonColor),
+                                foregroundColor: primaryButtonColor),
                             onPressed: null,
                             child: Text('Next'),
                           ),

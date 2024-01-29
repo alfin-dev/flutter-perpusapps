@@ -225,8 +225,8 @@ class _pinjamBukuState extends State<pinjamBuku> {
                 Container(
                   alignment: Alignment.bottomCenter,
                   child: ElevatedButton.icon(
-                    style:
-                        ElevatedButton.styleFrom(primary: primaryButtonColor),
+                    style: ElevatedButton.styleFrom(
+                        foregroundColor: primaryButtonColor),
                     onPressed: (isLoading)
                         ? null
                         : () async {

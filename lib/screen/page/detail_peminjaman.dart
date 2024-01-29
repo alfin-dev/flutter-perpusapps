@@ -149,8 +149,8 @@ class _detailPeminjamanState extends State<detailPeminjaman> {
                   Container(
                     alignment: Alignment.bottomCenter,
                     child: ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(primary: primaryButtonColor),
+                      style: ElevatedButton.styleFrom(
+                          foregroundColor: primaryButtonColor),
                       onPressed: () async {
                         await Navigator.push(
                           context,
@@ -177,7 +177,8 @@ class _detailPeminjamanState extends State<detailPeminjaman> {
                   Container(
                     alignment: Alignment.bottomCenter,
                     child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(primary: deleteColor),
+                      style: ElevatedButton.styleFrom(
+                          foregroundColor: deleteColor),
                       onPressed: () async {
                         await _showDelete();
                       },

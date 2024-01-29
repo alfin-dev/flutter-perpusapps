@@ -304,7 +304,7 @@ class _registerPageState extends State<registerPage> {
                         margin: EdgeInsets.symmetric(horizontal: 20),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: primaryButtonColor),
+                              foregroundColor: primaryButtonColor),
                           onPressed: () async {
                             await _cekLogin();
                           },

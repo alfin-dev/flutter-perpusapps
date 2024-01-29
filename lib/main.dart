@@ -288,7 +288,7 @@ class _LoginPageState extends State<LoginPage> {
                         margin: EdgeInsets.symmetric(horizontal: 20),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: primaryButtonColor),
+                              foregroundColor: primaryButtonColor),
                           onPressed: proses
                               ? null
                               : () async {

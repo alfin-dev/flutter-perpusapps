@@ -202,7 +202,8 @@ class _TambahKategoriState extends State<TambahKategori> {
               Container(
                 alignment: Alignment.bottomCenter,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: primaryButtonColor),
+                  style: ElevatedButton.styleFrom(
+                      foregroundColor: primaryButtonColor),
                   onPressed: () async {
                     await _insertKategori();
                   },

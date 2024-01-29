@@ -163,8 +163,8 @@ class _kembalikanBukuState extends State<kembalikanBuku> {
                 Container(
                   alignment: Alignment.bottomCenter,
                   child: ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(primary: primaryButtonColor),
+                    style: ElevatedButton.styleFrom(
+                        foregroundColor: primaryButtonColor),
                     onPressed: () async {
                       await _insertPengembalian();
                     },

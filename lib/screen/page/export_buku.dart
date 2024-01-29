@@ -164,7 +164,7 @@ class _exportBukuState extends State<exportBuku> {
                   selectFile();
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: primaryButtonColor,
+                  foregroundColor: primaryButtonColor,
                   minimumSize: const Size(122, 48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5.0),
@@ -185,7 +185,7 @@ class _exportBukuState extends State<exportBuku> {
               _insertExcel();
             },
             style: ElevatedButton.styleFrom(
-              primary: primaryButtonColor,
+              foregroundColor: primaryButtonColor,
               minimumSize: const Size(122, 48),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5.0),
